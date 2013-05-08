@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="heroHeader"></div>
+
+
+
+<div class="centre">
+	<h1> Today's Filtered News </h1>
+  {% for story in story_list %}
+
+<div class="tile">
+<div class="demo-row">
+
+
+      <h5><strong><a href="{{ story.url }}"target="_blank"> {{ story.title }}</a></strong> <br /> ({{ story.source }})</h5>
+      </div>
+    <div class="demo-row">
+	  <h4>{{ story.abstract }}</h4>
+	</div>
+
+</div>
+
+
+
+	    <div class="row">
+
+    <div class="span2"> 
+	  <form action="{{ url_for('like') }}" method="post">
+		<input type="hidden" name="story_id" value={{ story.id  }}>
+		  <button  class="btn-large" type="submit" value="Submit">Yes</button></form>
+		</div> <!-- span4 -->
+	<div class="span2">
+		<form action="{{ url_for('dislike') }}" method="post">
+		  <input type="hidden" name="story_id" value={{ story.id }}>
+			<button  class="btn-large" type="submit" value="Submit">No</button></form>
+		</div><!--span4-->
+
+    </div><!--endrow-->
+
+{% endfor %}
+</div>
+
+
+
+{% endblock %}

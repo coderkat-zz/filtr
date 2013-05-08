@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+<div id="header">
+<div class="demo-panel-title">
+	<div class="wrap">
+	
+	<h1> Filtr: </h2>
+
+	<h2>Filtering the daily news <br />just for you.</h2>
+
+  </div>
+</div>
+</div>
+
+
+{% block title %}Welcome!{% endblock %}
+
+
+
+{% block title %}Welcome!{% endblock %}
+
+
+{% block content %}
+<<<<<<< HEAD
+<div class="login-screen">
+<div class="tile">
+=======
+<div id="header">
+<div class="demo-panel-title">
+	<div class="wrap">
+
+>>>>>>> demo_day
+<h1>Welcome to Filtr:</h1><br />
+<h3>Discovering daily news,<br /> filtered just for you.</h3>
+
+</div>
+<<<<<<< HEAD
+=======
+</div>
+</div>
+>>>>>>> demo_day
+
+<div class="demo-row">
+
+<div class="login-form">
+	<h1>Log in</h1>
+
+	<form name="login" action="{{ url_for('validate_login') }}" method="post">
+		Email: <input type="text" name="email"><br />
+		Password: <input type="password" name="password"><br />
+		<button class="btn.btn-primary.active" type="submit" value="Login">Log In!</button>
+	</form>
+</div>
+
+
+<div class="login-form">
+
+	<h1>Sign up</h1>
+<<<<<<< HEAD
+<form name="login" action="{{ url_for('validate_login') }}" method="post">
+=======
+<form name="login" action="{{ url_for('signup') }}" method="post">
+>>>>>>> demo_day
+	Email: <input type="text" name="email"><br />
+	Password: <input type="password" name="password"><br />
+	<button class="btn.btn-primary.active" type="submit" value="Login">Sign Me Up!</button>
+</form>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

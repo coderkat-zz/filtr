@@ -1,0 +1,80 @@
+<html>
+
+
+
+<head>
+
+
+	{% block head %}
+<<<<<<< HEAD
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="Flat-UI-master/css/flat-ui.css") }}">
+=======
+
+
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="Flat-UI-master/css/flat-ui.css") }}">
+
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/animate-custom.css") }}">
+
+
+
+>>>>>>> demo_day
+	<title>{% block title %}{% endblock %}</title>
+
+		{% endblock %}
+
+</head>
+
+<body>
+	<div class="wrapper">
+<<<<<<< HEAD
+
+	<div class="navbar">
+		<div class="navbar-inner"
+ {% if session['email'] %}
+=======
+
+	<div class="navbar">
+		<div class="navbar-inner"
+
+ {% if 'user_id' in session  %}
+>>>>>>> demo_day
+
+  <!-- Sign-in status-->
+  <div align=right>You are currently signed in as: {{ session['email'] }}.</div>
+  <div align=right><a href="{{ url_for('logout') }}">Log Me Out</a></div>
+
+	{% else %}
+	  <div align=right><a href="{{ url_for('login') }}">Click here to login.</a></div>
+
+	{% endif %}
+
+</div>
+</div>
+
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages %}
+				<strong ><font color="red">{{ message }}</font></strong>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+
+<div class="wrapper">
+<div class="container-fluid">
+
+
+	{% block content %}{% endblock %}
+
+
+</div>
+</div>
+</div>
+
+
+	<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+
+</body>
+</html>

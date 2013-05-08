@@ -1,0 +1,153 @@
+from reque readme (RUBY):
+
+To define some work, make a job. Jobs need a work method:
+
+class ImageConversionJob
+  def work
+    # convert some kind of image here
+  end
+end
+Next, we need to procrastinate! Let's put your job on the queue:
+
+resque = Resque.new
+resque << ImageConversionJob.new
+Neat! This unit of work will be stored in Redis. We can spin up a worker to grab some work off of the queue and do the work:
+
+bin/resque work
+This process polls Redis, grabs any jobs that need to be done, and then does them. 
+
+Go here: https://github.com/resque/resque/blob/master/README.md for more.
+
+********************************************************************
+
+PYRES
+
+Provides a web-based monitoring application
+Redis is used as the queue backend
+
+--> Puts jobs (which can be any kind of class) on a queue and process them while watching the progress on my browser!!
+
+
+How I'm using it:
+
+1. Automatically pull RSS feeds to the db (stories) every n.
+
+2. When a user preference is saved in the database, I create a job in the queue that
+trains my corpus for that user (runs 'guess' from classify.py)
+
+3. When a user logs in, scan the RSS feed in the story db table & run 'guess' from classify.py to build their queue.
+
+--> TO DO: do I already have classes built for these things? Can I convert my 
+functional code to classes? I can convert existing classes to be compatible w/pyres:
+just add a queue attribuite and define a perform() method on the class
+	-example: http://itybits.com/pyres/example.html for more detailed look
+
+I will have:
+	a StoryGrab class (w/work method that pulls RSS feeds)
+	a TrainJob class (w/work method that does the training)
+	a GuessJob class (w/work method that runs the algorithm to guess)
+	a UserQueue class (w/work method that determine's the reader's queue given the other job results)??
+	
+Other ?? notes:
+	the worker is run from the terminal?
+
+
+######################
+#  The Classes       #
+######################
+
+ResQ classes:
+	define the Redis server object to which we'll enqueue jobs into their different 
+	queues (for now, server='localhost:6379, password=None, timeout=None,
+	retry_connection=True' --> later, server will change to heroku or whatever? I guess?)
+
+	__init__ takes keyword args:
+		server: IP address & port of Redis server (default localhost:6379)
+		password: password, if required, of Redis server. Default None
+		timeout: keyword is in signature, but unused. Default None
+		retry_connection: keyword in signature, but depreceated. Default True
+
+	ex:
+		r = ResQ(server="192.168.1.10:6378", password="mypassword")
+			# assuming redis running on default port w/no password
+
+	r is a reque OBJECT on which we can enqueue tasks:
+		r.enqueue(SomeClass, args)
+			--> SomeClass can be any python class w/a perform method & queue attribute
+
+		close() --> close underlying redis connection
+
+		enqueue(class, *args) --> enqueue a job to a specific queue. Make sure the class you're passing has a QUEUE attribute and PERFORM method on it.
+
+		info() --> returns dict of current status of pending jobs processed, # of queues, # of workers, # of failed jobs.
+
+Job Classes:
+	class pyres.job.Job(queue, payload, resq, worker=None)
+		every job on the ResQ is an INSTANCE of the Job class
+
+	__init__ takes keywords args:
+		queue: string defining queue to which this Job will be added
+		payload: dict containing the string name of a class which extends this Job 
+				  & a list of args which will be passed to that class
+		resq: instance of ResQ class
+		worker: name of specific workerif you'd like this Job to be done by that 
+				worker. Default=None
+
+	fail(exception) --> method providing a way to fail a job. Uses whatever failure
+				backend I've provided. Default is the RedisBackend
+
+	perform() --> converts payload into args and calls perform method on the payload
+				class
+
+	classmethod reserve(queue, res, worker=None) --> reserve a job on the queue. This
+				marks the job so that other workers won't pick it up
+
+
+Worker Classes:
+	class pyres.worker.Worker(queues=[], server='localhost:6379', password=None)
+		Defines a worker. pyres_worker script instantiates this Worker class, 
+			passes a comma-separated list of queues to listen on:
+
+		from pyres.worker import Worker
+		Worker.run([queue1, queue2], server='localhost:6379')
+
+	validate_queues() --> check is a worker is given at least one queue to work on
+
+	work(interval=5) --> invoked by run method. work listens on a list of queues and
+						sleeps for interval time. 
+		interval: # of seconds worker will wait til processing next job (default:5)
+		whenever a worker finds a job on the queue it first calls reserve on that
+			job to make sure another worker won't run it, then forks itself to 
+			work on that job
+		Finally, the process method actually processes the job by eventually calling
+			the Job instance's perform method
+
+Failure Classes:
+	Provide a base class that custom backends can subclass. Also provide basic
+	traceback and message parsing
+		class pyres.failure.base.BaseBackend(exp, queue, payload, worker=None)
+
+	__init__ keyword args:
+		exp: exception generated by your failure
+		queue: queue in which te Job was enqueued when it failed
+		payload: payload passed to the Job
+		worker: worker processing the Job when it failed
+
+	class pyres.failure.RedisBackend(exp, queue, payload, worker=None):
+		extends the BaseBackend to provide a Redis backend for failed jobs
+
+		save(resq=None)--> saves failed Job into a 'failed' Redis queue, preserving
+							all its original enqueued info
+
+**************
+* Testing    *
+**************
+
+check out itybits.com/pyres/tests.html:
+	install nose
+	make sure Redis server running
+	run tests
+
+
+
+

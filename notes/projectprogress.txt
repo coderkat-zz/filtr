@@ -1,0 +1,394 @@
+static methods issue to make my pyres thing worK:
+
+@staticmethod function is nothing more than a function defined inside a class. It is callable without instantiating the class first. It’s definition is immutable via inheritance.
+
+@classmethod function also callable without instantiating the class, but its definition follows Sub class, not Parent class, via inheritance. That’s because the first argument for @classmethod function must always be cls (class).
+
+So, my @staticmethod on my PyRes perform method of the Classifier class said that we didn't need to insantiate the class in order to do the work. However, this meant that I had to say "hey, perform, go talk to the Classifier class to get the things you need to work."
+
+Gaining a better understanding of OOP, classes, methods, and functions.
+
+NExt step:
+	somehow need to timeout between getting article with urllib2 and breaking apart text for classifier
+
+	code's like this:
+		# isolate story text from url
+		article = Classifier.gettext(url)
+		print article
+		cl = getwords(article)
+		 --> was getting error on this last line that 'article' not defined
+
+
+	python time module: import time, time.sleep(5)--> interpreter still doesn't allow it to run, it's not pausing between actions.
+
+	HA. INSTEAD, did this:
+	cl = Classifier.getwords(Classifier.gettext(url))
+		AAAAAND IT WORKS!!!!!
+
+And then later:
+	trouble accessing outside methods (Class Methods rather than the static one I'm in). Turns out I needed to reference them by MAKING an instance method in my static method (classifier = Classifier()) and then I can call the outside function:
+		classifier.setdb('test1.db')
+	Viola. OOP for the confusion!
+
+AND LATER:
+	Turns out I had my whole train thing set up wrong if I split apart all the words first thing!  What I HAD (based on the book I got the algorithm stuff from) was:
+
+		def train(self, item, cat):
+		features = self.getfeatures(item)
+		# increment count for every feature with this category
+		for f in features:
+			self.incf(f, cat)
+		# increment count for this category
+		self.incc(cat)
+		# save to db
+		self.con.commit()
+
+	BUT, at this point, I am:
+		1. taking in a url
+		2. going and grabbing the page text w/urllib2
+		3. isolating the article using Decruft Readability
+		4. parsing out the article text and ditching the html using PyQuery
+		5. putting every word in the article in a list, except numbers and common words (or, and, not, etc)
+
+		So, when I come to my training, I'm actually just passing in one word at a time: I no longer have to "getfeatures" of the document item! So now, I call train in the 
+				for word in words:
+					train(word, category)
+		and the method needs to be rewritten like thi:
+					def train(self, item, cat):
+						# increment count the item of this category
+						self.incf(item, cat)
+						# increment count for this category
+						self.incc(cat)
+						# save to db
+						self.con.commit()
+
+TA. FRIGGIN. DA.
+(random insight: rolling with the punches and not being attached to anything are good traits for a developer to have. shit. changes. all. the. time.)
+
+VICTORIOUS!?!?!? FOR NOW.
+
+2013-04-23 17:30:06,425 INFO sqlalchemy.engine.base.Engine (u'34', 1, 0)
+INFO:sqlalchemy.engine.base.Engine:(u'34', 1, 0)
+WOWZA!!! HERE IS A STORY URL!!!
+http://rss.cnn.com/~r/rss/cnn_topstories/~3/TT8Ec4zVGJk/
+INFO:pyres:enqueued 'classifying.Classifier' job on queue Classifier
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2013 17:30:06] "POST /dislike HTTP/1.1" 302 -
+
+note: when using PyRes, the first arg for 'enqueue' does in face have to be the Class name that it jumps to, not the queue name like the documentation suggests. Jeez Louise.
+
+
+
+HOKAY. SO.
+
+Everything in bash looks good while I'm running routes.py. My print statement prints, stuff enqueues.
+
+But. When I track what's happening with PyRes, I see that the job is found on the training queue, but then it fails with the message:
+	(Job{training} | classifying.Classifier | [u'http://www.bbc.co.uk/news/uk-politics-22119096#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa', 1, u'yes']) failed: No module named classifying
+?????????????????????????????
+which makes me think that there's something screwy going on... where? It obviously gets enqueued, but then the job fails, so wtf.
+
+** TO SEE THIS: 
+	 $ cd /env/bin
+	 $ pyres_manager Classifier <-- queue name (or maybe class?)
+
+	 Displays what's happening with workers and the queue (haha MY MINIONS)
+	 and logs when they get a job, what that job is, and if it failed or not. 
+
+same here:
+env)kat@Kat-xps:~/Projects/herewego/env/bin$ ./pyres_worker probability
+2013-04-25 13:30:47 16627 INFO     starting
+2013-04-25 13:31:13 16627 INFO     Found job on probability: (Job{probability} | feedseed.Probabilities | [1])
+2013-04-25 13:31:13 16627 INFO     Forked 16652 at 2013-04-25 13:31:13.907539
+2013-04-25 13:31:13 16652 INFO     Processing (Job{probability} | feedseed.Probabilities | [1]) since 2013-04-25 13:31:13.907742
+2013-04-25 13:31:13 16652 ERROR    (Job{probability} | feedseed.Probabilities | [1]) failed: No module named feedseed
+Traceback (most recent call last):
+  File "build/bdist.linux-x86_64/egg/pyres/worker.py", line 256, in process
+    return job.perform()
+  File "build/bdist.linux-x86_64/egg/pyres/job.py", line 67, in perform
+    payload_class = self.safe_str_to_class(payload_class_str)
+  File "build/bdist.linux-x86_64/egg/pyres/__init__.py", line 92, in safe_str_to_class
+    mod = my_import(module)
+  File "build/bdist.linux-x86_64/egg/pyres/__init__.py", line 80, in my_import
+    mod = __import__(name)
+ImportError: No module named feedseed
+
+
+PyRes-Scheduler
+	wtf. less documentation. struggling with the add_job(my_task) line.
+
+
+Scheduling Options:
+
+APScheduler:
+	integrates with Heroku (https://devcenter.heroku.com/articles/clock-processes-python)
+	lightweight, in-process
+	cron-like scheduling
+	platform neutral and can directly access your application’s variables and functions
+	the thing that's wrapped with pyres in pyres-scheduler	
+
+Redis-Queue:
+	also integrates with Heroku
+	for python
+	queues jobs and runs them in the background with workers
+	backed with redis (like pyres)
+	ACTUALLY: consider if pyres ends up being the worst
+
+Celery:
+	integrates with Redis
+	asynchronous
+	good documentation
+	pretty heavy.
+
+RQ:
+	redis-backed
+	heroku-compatible
+	for processing background jobs
+
+4/24: Met with Christian. Going to use pyres for guessing user interest on user login. 
+APScheduler (interval-based scheduling) for RSS feeds
+
+
+APSched woes:
+
+My Problem:
+	--> when building in apscheduler to my routes thusly:
+			import all the apscheduler crap
+			import my external file w/ load_stories() in it
+
+			sched = Scheduler()
+			sched.start()
+
+			sources = {"BBC":'http://feeds.bbci.co.uk/news/rss.xml', "New York Times":'http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml', "NPR News":'http://www.npr.org/rss/rss.php?id=1001', "CNN":'http://rss.cnn.com/rss/cnn_topstories.rss'}
+
+			@sched.interval_schedule(minutes=2)
+			def populate_news():
+				print "TESTING WTF"
+				for source in sources:
+					load_stories(source, session)
+					print "populated?"
+		--> I get an error that "RuntimeError: working outside of request context"
+
+	--> HOWEVER: when I make THIS file:
+			from datetime import datetime
+			from apscheduler.scheduler import Scheduler
+			import add
+			from add import *
+
+			# start scheduler
+			sched = Scheduler()
+			sched.start()
+
+			# Schedule job_function to be called every two hours
+			@sched.interval_schedule(seconds=15)
+			def job_function():
+				add(3, 4)
+		linked to my add() from add.py,
+			--> works like a charm in the python interpreter
+
+
+Traceback (most recent call last):
+  File "enqueue.py", line 11, in <module>
+    result = q.enqueue(load_stories, model.session)
+  File "/home/kat/Projects/herewego/env/local/lib/python2.7/site-packages/rq/queue.py", line 160, in enqueue
+    timeout=timeout, result_ttl=result_ttl)
+  File "/home/kat/Projects/herewego/env/local/lib/python2.7/site-packages/rq/queue.py", line 127, in enqueue_call
+    return self.enqueue_job(job, timeout=timeout)
+  File "/home/kat/Projects/herewego/env/local/lib/python2.7/site-packages/rq/queue.py", line 182, in enqueue_job
+    job.save()
+  File "/home/kat/Projects/herewego/env/local/lib/python2.7/site-packages/rq/job.py", line 298, in save
+    obj['data'] = dumps(self.job_tuple)
+cPickle.PicklingError: Can't pickle <class 'sqlalchemy.orm.session.SessionMaker'>: attribute lookup sqlalchemy.orm.session.SessionMaker failed
+
+#### FIXED?!?  when I added APScheduler @handle and made the enqueue call part of a function. WTF but YAY ###
+
+PROBLEM:
+	How do I START showing a user stories, when I have no trained database?
+	This is really where I need a 'channel'-type question to get started:
+		"what general stories are you interested in?" etc
+	Can I move on to v.2 before I do this? I feel like this could be part of my db refactoring.
+
+
+idea for new users:
+	
+	On signup (tour): would you hypothetically be interested in these articles? (w/just titles, abstracts, etc?) then train corpus from there (this way can use old articles that I just hand-pick)
+
+
+TODO: MEMCACHE
+
+
+sosh model for signup process & initial preferences for training corpus:
+	modal, one thing at a time, make it more fun and interactive
+
+handler for testing: automate, clear data & reset (but only locally)
+
+
+
+LE PROBLEM:
+
+when i enqueue ('firstno' set to do this right now)
+===>
+2013-04-30 11:50:33  4911 INFO     Forked 6286 at 2013-04-30 11:50:33.871792
+2013-04-30 11:50:33  6286 INFO     Processing (Job{training} | classify.classifying.Classifier | [u'http://www.reuters.com/article/2013/04/28/us-jpmorgan-bisignano-idUSBRE93R0CQ20130428?feedType=RSS&feedName=businessNews ', 1, u'no']) since 2013-04-30 11:50:33.871984
+2013-04-30 11:50:33  6286 ERROR    (Job{training} | classify.classifying.Classifier | [u'http://www.reuters.com/article/2013/04/28/us-jpmorgan-bisignano-idUSBRE93R0CQ20130428?feedType=RSS&feedName=businessNews ', 1, u'no']) failed: No module named classify.classifying
+Traceback (most recent call last):
+  File "build/bdist.linux-x86_64/egg/pyres/worker.py", line 256, in process
+    return job.perform()
+  File "build/bdist.linux-x86_64/egg/pyres/job.py", line 67, in perform
+    payload_class = self.safe_str_to_class(payload_class_str)
+  File "build/bdist.linux-x86_64/egg/pyres/__init__.py", line 92, in safe_str_to_class
+    mod = my_import(module)
+  File "build/bdist.linux-x86_64/egg/pyres/__init__.py", line 80, in my_import
+    mod = __import__(name)
+ImportError: No module named classify.classifying
+
+ALL ABOUT THE PATH. Christian wrote in the correct path to the path (could also set up my program as a python module and pip install it, thus giving access to everything)
+
+
+
+RE: getting news for a user --->
+For NOW... 
+doesn't make sense to enqueue the classifying task since I have nothing to show my user. 
+For now, they will wait (maybe have some js thing that shows them something cool 'while we find your articles' or whatever)
+
+Workarounds: 
+	- run this process completely asynchronously, maybe on rss pulls for users who log in frequently, otherwise make them wait?
+	- 
+
+
+
+
+CURRENT BUGS/PROBLEMS (that I'm aware of):
+  Stuck on:
+	* fisher classifier: error when p == 0 in lines 219ff (cannot take log(0). Also, this is a new problem so what gives)
+
+BREAKYTOWN:
+** ASK CHRISTIAN/LIZ/PAMELA/SOMEONE **
+
+No code changed between these 2 runs, just the articles passed in:
+1.
+(env)kat@Kat-xps:~/Projects/herewego$ python classifying.py "http://www.bbc.co.uk/news/business-22297569" "guess" "yes"
+WARNING:root:hi
+Main 1
+/home/kat/Projects/herewego/decruft/decruft.py:286: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
+  if parent_node:
+done
+Test article classified as 
+Traceback (most recent call last):
+  File "classifying.py", line 291, in <module>
+    main()
+  File "classifying.py", line 285, in main
+    print cl.classify(doc)
+  File "classifying.py", line 250, in classify
+    p = self.fisherprob(item, c)
+  File "classifying.py", line 227, in fisherprob
+    fscore = -2*math.log(p)
+ValueError: math domain error
+
+2.
+(env)kat@Kat-xps:~/Projects/herewego$ python classifying.py "http://www.bbc.co.uk/news/world-asia-22299929" "guess" "yes"
+WARNING:root:hi
+Main 1
+/home/kat/Projects/herewego/decruft/decruft.py:286: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
+  if parent_node:
+done
+Test article classified as 
+no
+1.20469880017e-15 yes
+
+
+It has something to do with  --->
+		for f in features: # iterate through list
+			p *= (self.weightedprob(f, cat, self.cprob)) # OH NOES. GETS TO ZERO.
+		# WHICH IS WHY FSCORE BREAKS. WTF
+		fscore = -2*math.log(p)
+	if p gets too close to zero (which, when would/wouldn't it? Is this an issue of not enough data???), it can't take the log(0)
+
+
+
+--> This is also (not surprisingly) affecting load_queue (lines 33-70 in feedseed.py), which is what I'm enqueuing on user signin. Make sure to test once I figure out the solution.
+
+
+
+The challenge: Tying users to classifier
+
+
+
+
+INFO:sqlalchemy.engine.base.Engine:()
+HERE?
+<addinfourl at 140013518923752 whose fp = <socket._fileobject object at 0x22e8650>>
+/home/kat/Projects/herewego/decruft/decruft.py:286: FutureWarning: The behavior of this method will change in future versions. Use specific 'len(elem)' or 'elem is not None' test instead.
+  if parent_node:
+Here be the problem?
+INFO:werkzeug:127.0.0.1 - - [30/Apr/2013 16:04:51] "GET /news HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/home/kat/Projects/herewego/env/lib/python2.7/site-packages/flask/app.py", line 1701, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/kat/Projects/herewego/env/lib/python2.7/site-packages/flask/app.py", line 1689, in wsgi_app
+    response = self.make_response(self.handle_exception(e))
+  File "/home/kat/Projects/herewego/env/lib/python2.7/site-packages/flask/app.py", line 1687, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/kat/Projects/herewego/env/lib/python2.7/site-packages/flask/app.py", line 1360, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/kat/Projects/herewego/env/lib/python2.7/site-packages/flask/app.py", line 1358, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/kat/Projects/herewego/env/lib/python2.7/site-packages/flask/app.py", line 1344, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/kat/Projects/herewego/routes.py", line 112, in news
+    FisherClassifier.perform(session['user_id'])
+  File "/home/kat/Projects/herewego/classify/classifying.py", line 209, in perform
+    probability = cl.fisherprob(doc, classification, user_id)
+  File "/home/kat/Projects/herewego/classify/classifying.py", line 277, in fisherprob
+    p *= (self.weightedprob(f, cat, user_id, self.cprob)) # OH NOES. GETS TO ZERO.
+  File "/home/kat/Projects/herewego/classify/classifying.py", line 165, in weightedprob
+    basicprob = prf(f, cat)
+TypeError: 'int' object is not callable
+
+
+probability = cl.fisherprob(doc, classification, user_id)
+
+doc = string of whole article
+classification = set as 'yes' by  meeee
+user_id = grabbed from form many moons ago
+
+
+def fisherprob(self, item, cat, user_id):
+		# multiply all probabilities together
+		p = 1
+		features = self.getwords(item) # list of words
+		for f in features: # iterate through list
+
+			p *= (self.weightedprob(f, cat, user_id, self.cprob)) # OH NOES. GETS TO ZERO.
+		# WHICH IS WHY FSCORE BREAKS. WTF HAPPENED.
+		# Note: does not happen on all articles.
+
+		# take natural log and multiply by -2
+		fscore = -2*math.log(p)
+
+		# use inverse chi2 function to get a probability
+		return self.invchi2(fscore, len(features)*2)
+
+(self.weightedprob(f, cat, user_id, self.cprob(f, cat, user_id)))
+
+self.cprob(f, cat, user) beceomes my prf argument in weightedprob...
+...no wonder i'm getting a float error (since prf is a probability)... ? but this didn't happen before
+
+
+OH MY GOD JUST ADD USER_ID TO __INIT__ FOR EACH CLASS!! (rather than throwing it in as an argument everywhere)
+
+
+re: p getting to 0 and breaking on -2(log(p)) thingy...
+just TEST FOR THAT and bypass the rest of the thing. If our probability gets THAT LOW, the article is CLEARLY not a hit. this will happen less and less as a user gives input, too (I THINK)
+
+the next step:
+	__ FIX THE TRAINER AGAIN. Write it down. Jeez. Oh jeez.
+	_X_ not running the whole classify process on refresh of news page
+	_X_ Remove article from display (Queue) if 'no' selected 
+		__ (maybe have an 'are you sure?')
+	__ change the look of a button/article if 'yes' selected
+	__ cron-job for prediction classification, background on signup (find something else for user to do/look at)
+	__ memcache for slowness?
+	__ signup selection page: jquery for slidiness
+	__ "show me more!" button for news view
+
+

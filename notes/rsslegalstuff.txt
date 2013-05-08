@@ -1,0 +1,15 @@
+***Terms and Conditions for Use of the NPR RSS Feeds***
+
+NPR's RSS feeds are protected by U.S. and international copyright laws. All rights in and to NPR's RSS feeds, including the content and technology included therein, are reserved to NPR. NPR's RSS feeds are available for personal, noncommercial use or for noncommercial use on the Web site, weblog or similar application of a nonprofit corporation which is exempt from federal income taxes under Section 501(c)(3) of the Internal Revenue Code ("501(c)(3) Nonprofit Corporation"). You may display the headlines, active links and other information contained in the RSS feeds (the "RSS feed content") on your personal Web site weblog, or similar application, or on your 501(c)(3) Nonprofit Corporation Web site, weblog, or similar application, provided that:
+
+you do not modify or delete any of the RSS feed content;
+you do not redistribute the RSS feeds;
+you do not post NPR audio files or full-text stories other than as included in the RSS feed;
+the links redirect the user to the NPR Web sites when the user clicks on them;
+you do not insert any intermediate page, splash page or other content between the links and the applicable NPR web page;
+the use or display does not suggest that NPR promotes or endorses any third party causes, ideas, Web sites, products or services.
+If you display the RSS feed content publicly, including on your website, you must provide attribution to NPR adjacent to the RSS feed content, by including "NPR News Headlines" or "NPR" in text adjacent to the RSS feed content, without modification. Any other use of NPR's trademarks, or service marks, or of the RSS feeds requires the prior written permission of NPR. For permission requests, please visit NPR's permissions page. NPR reserves the right to discontinue providing RSS feeds and to require that you cease accessing or using the NPR RSS feeds, or RSS feed content, at any time for any reason. Please see NPR's Terms of Use for more information before you use our RSS feeds. By using the NPR RSS feeds, you agree to be bound by the terms and conditions set forth above, as well as those in our Terms of Use.
+
+These terms and conditions only apply to NPR national news feeds. Each station may have a separate Terms of Use for its feed. Please contact the station to learn more.
+
+

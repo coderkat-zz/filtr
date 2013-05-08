@@ -1,0 +1,67 @@
+RSS sources:
+
+NYTimes feeds (home page(us/global), world, us, business, technology, sports, science, health, arts, style, travel)
+
+BBC News feeds (top stories, world, uk, business, politics, health, education&family, scince&environment, tech, entertainment&arts) 
+
+NPR feeds (news headlines, arts&culture, business, health&science, opinion, people&places, politics, us news, world news)
+
+CNN feeds (top stories, world, us, business, politics, crime, tech, health, entertainment, travel, living)
+
+ABC News feeds (top stories, world, us, politics, money, technology, health, entertainment, travel, sports)
+
+CNET (latest news)
+
+Reuters (arts, business, entertainment, health, lifestyle, media, money, politics, science, sports, tech, top news, us news, world)
+
+Fox?(bllllggghhhh)(ok fine) (latest headlines, entertainment, health, lifestyle, most popular, opinion, politics, scitech, sports, travel, us, world)
+
+
+### using feedparser ###
+
+http://pythonhosted.org/feedparser/introduction.html
+parse from a remote url:
+
+import feedparser
+
+d = feedparser.parse('http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml')
+d['feed']['title']
+>>u'NYT >Home Page'
+
+can also parse from local files or strings
+
+all feed items available in d.entries, which is a list,
+ordered the same as the original feed
+
+accessing elements:
+**most important**
+d.entries[0].title
+d.entries[0].link
+d.entries[0].description
+d.entries[0].published
+
+d.entries[0].id 
+
+can also access multiple links
+
+can test if elements are present:
+'title' in d.feed --> True
+'ttl' in d.feed --> False
+d.feed.get('title', 'No title')
+
+
+NYT:
+title: headline
+description: abstract + TONS OF CRAP
+tags: returns list of dicts, each w/key 'term' mapped to keywords?
+  for i in d.entries[0].tags:
+  		print i['term']
+  	prints list of tags/keywords
+RSS does not contain full text of articles
+
+summary: abstract + TONS OF CRAP
+author: 'By STEVEN ERLANGER and DAVID JOLLY'
+
+*** dealing with full content -->
+	can grab url from RSS, then read page with urllib2
+
