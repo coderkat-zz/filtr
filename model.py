@@ -26,17 +26,11 @@ def now():
 class Users(Base):
     __tablename__ = "users"
 
-<<<<<<< HEAD
+
     id = Column(Integer, primary_key=True)
     email = Column(String(64))
     password = Column(String(64))
-    name = Column(String(128))
-=======
-	id = Column(Integer, primary_key=True)
-	email = Column(String(64))
-	password = Column(String(64))
-	name = Column(String(128), nullable=True)
->>>>>>> demo_day
+    name = Column(String(128), nullable=True)
 
 
 # story table: for all users' use, no foreign keys
@@ -53,20 +47,6 @@ class Stories(Base):
 # mapping table: predicted relationship b/t user and story
 class Queue(Base):
     __tablename__ = "queue"
-<<<<<<< HEAD
-
-    id = Column(Integer, primary_key=True)
-    # user_id = Column(Integer, ForeignKey("users.id"))
-    story_id = Column(Integer, ForeignKey("stories.id"))
-    user_id = Column(Integer, ForeignKey("users.id"))
-    score = Column(Integer)  # calculated fisher probability for this item
-    liked = Column(Integer)  # 0:Falst, 1:True
-    create_time = Column(DateTime, default=now())
-
-    story = relationship("Stories", backref=backref("queue", order_by=id))
-    user = relationship("Users", backref=backref("queue", order_by=id))
-
-=======
 
     id = Column(Integer, primary_key=True)
     # user_id = Column(Integer, ForeignKey("users.id"))
@@ -77,7 +57,7 @@ class Queue(Base):
 
     story = relationship("Stories", backref=backref("queue", order_by=id))
     user = relationship("Users", backref=backref("queue", order_by=id))
->>>>>>> demo_day
+
 
 class InitStories(Base):
     __tablename__ = "initstories"

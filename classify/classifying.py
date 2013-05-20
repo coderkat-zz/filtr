@@ -65,19 +65,7 @@ class Classifier:
 
 	@staticmethod 
 	def perform(url, user_id, classification):
-<<<<<<< HEAD
-		# grab article text, parse out markup and return list of significant words
-		artwords = Classifier.getwords(Classifier.gettext(url))
-		# need to make a Classifier instance in order to reference a class method
-		classifier = Classifier(artwords, user_id)
-		# set up db (or connect if exists)
-		classifier.setdb('news.db')
-		# train db w/new words and their classifications
-		for item in artwords:
-			classifier.train(item, classification)
 
-
-=======
 		# TO DO: Integrate user_id
 		try:
 		# grab article text, parse out markup and return list of significant words
@@ -91,7 +79,7 @@ class Classifier:
 				classifier.train(item, classification)
 		except Exception:
 				pass
->>>>>>> demo_day
+
 
 	# method that opens the dbfile for this classifier and creates
 	# tables if necessary
@@ -195,78 +183,13 @@ class FisherClassifier(Classifier):
 	queue = "predict"
 
 	# init method w/variable to store cutoffs
-    def __init__(self, getfeatures, user_id):
-        Classifier.__init__(self, getfeatures, user_id)
-        self.minimums={}
+	def __init__(self, getfeatures, user_id):
+		Classifier.__init__(self, getfeatures, user_id)
+		self.minimums={}
 	
 
 	# classify and pull relevant news stories for user's feed!
-<<<<<<< HEAD
-    # @staticmethod 
-    def perform(self, user_id):
-        # grab range of current queue ids for user
-        exist_q = db_session.query(Queue).filter_by(user_id=user_id).all()
-        exist = []
-        for s in exist_q:
-            exist.append(s.id)
 
-	    # grab all RSS stories from Story table of db
-        stories = db_session.query(Stories).all()
-	    # set up a queue for ranked stories
-        queue = []
-        for item in stories:
-		    # determine probability that the user will like this item
-            try:
-                doc = Classifier.gettext(item.url) # strong of article words
-            except Exception:
-                pass
-            cl = FisherClassifier(Classifier.getwords, user_id) # returns FC instance
-            print cl
-            print cl. getfeatures
-            print cl.user_id
-            print cl.cprob
-
-            cl.setdb('news.db')
-            # find the probability that a user will like a given article
-            probability = cl.fisherprob(doc, 'yes')
-            if probability > 0:
-            # add item's probability to the queue dictionary
-               tup = (item.id, probability)
-               queue.append(tup)
-        	    # queue[item.id]=probability
-		# sort queue by probability, lowest --> highest
-	    queue = sorted(queue, key=lambda x: x[1])
-		
-		# grab top and lower rated stories, add to Queue 
-	    if len(queue)>=10:
-		    for i in queue[:2]:
-			    story_id = i[0]
-			    score = i[1]
-			    # add story, user, and probabiilty to the db for pulling articles for users
-			    story = Queue(story_id=story_id, score=score, user_id=user_id)
-			    db_session.add(story)
-		    for i in queue[-8:]:
-			    story_id = i[0]
-			    score = i[1]
-				# add story, user, and probabiilty to the db for pulling articles for users
-			    story = Queue(story_id=story_id, score=score, user_id=user_id)
-			    db_session.add(story)
-		    db_session.commit()
-	    else:
-		    for i in queue:
-			    story_id = i[0]
-			    score = i[1]
-			    # add story, user, and probabiilty to the db for pulling articles for users
-			    story = Queue(story_id=story_id, score=score, user_id=user_id)
-			    db_session.add(story)
-		    db_session.commit()
-
-		# clear old stories out of queue once new have been added
-	    for i in exist:
-		    d = db_session.query(Queue).filter_by(id=i).first()
-		    db_session.delete(d)
-	    db_session.commit()
-=======
 	@staticmethod 
 	def perform(user_id):
 		# frab range of current queue ids for user
@@ -325,8 +248,6 @@ class FisherClassifier(Classifier):
 			d = db_session.query(Queue).filter_by(id=i).first()
 			db_session.delete(d)
 		db_session.commit()
->>>>>>> demo_day
-
 
 	# set mins and get values (default to 0)
 	def setminimum(self, cat, min):

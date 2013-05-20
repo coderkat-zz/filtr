@@ -16,11 +16,6 @@ app.secret_key = SECRET_KEY
 # define redis server
 r = ResQ(server="localhost:6379")
 
-
-<<<<<<< HEAD:views.py
-=======
-
->>>>>>> demo_day:routes.py
 @app.teardown_request
 def shutdown_session(exception = None):
     db_session.remove()
@@ -158,32 +153,23 @@ def first_news():
     story_list = []
     for i in queue_list:
         story_list.append(model.session.query(model.Stories).filter_by(id=i.story_id).first())
-<<<<<<< HEAD:views.py
-
     return render_template("news.html", story_list=story_list)
-
-=======
-
-    return render_template("news.html", story_list=story_list)
->>>>>>> demo_day:routes.py
 
 
 @app.route("/news")
 def news():
-<<<<<<< HEAD:views.py
     #make sure user is signed in
     # if not g.user_id:
     #     flash("Please log in first!")
     #     return redirect(url_for('login'))
     # else:
-=======
     # TODO: Check Queue: if it is empty, classify. Otherwise, just display it.
     queued = db_session.query(Queue).filter_by(user_id=session['user_id']).all()
     if len(queued) < 5:
         FisherClassifier.perform(session['user_id'])
 
     # grab all items in queue
->>>>>>> demo_day:routes.py
+
     queue_list = model.session.query(model.Queue).all()
     story_list = []
     for i in queue_list:
@@ -202,35 +188,16 @@ def like():
     # Classify: Comment this out when PyRes is back
     # Classifier.perform(story.url, user_id, "yes")
 	# add the classifier job to the pyres queue
-<<<<<<< HEAD:views.py
-	r.enqueue(Classifier, story.url, user_id, "yes")
-
-	# return user to news page,  
-	return redirect(url_for('news'))
-=======
     r.enqueue(Classifier, story.url, user_id, "yes")
-	# return user to news page
+	# return user to news page,  
     return redirect(url_for('news'))
->>>>>>> demo_day:routes.py
+
 
 
 # TO DO: for preference routes, make story diappear from page view after button click action???
 @app.route("/dislike", methods=["POST"])
 def dislike():
-<<<<<<< HEAD:views.py
-	story_id = request.form["story_id"]
-	user_id = session['user_id']
-	# query story table in db to get url
-	story = model.session.query(model.Stories).filter_by(id=story_id).first()
-	# add the classifier job to the pyres queue
-	r.enqueue(Classifier, story.url, user_id, "no")
-	# remove selected article from Queue and therefore view
-	db_session.query(Queue).filter_by(user_id=user_id, story_id=story_id).delete()
-	db_session.commit()
 
-	# send user back to news page like nothing is taking any time
-	return redirect(url_for('news'))
-=======
     story_id = request.form["story_id"]
     user_id = session['user_id']
     # query story table in db to get url
@@ -248,7 +215,7 @@ def dislike():
 @app.route("/playing")
 def playing():
     return render_template("selectionjs.html")
->>>>>>> demo_day:routes.py
+
 
 
 @app.route("/logout")

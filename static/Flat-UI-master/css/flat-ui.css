@@ -298,23 +298,15 @@ h6 {
       -moz-border-radius: 0 6px 6px 0;
       border-radius: 0 6px 6px 0; }
 
-<<<<<<< HEAD
-=======
 
-
-
->>>>>>> demo_day
 .btn-toolbar .btn.active {
   color: white; }
 
 .demo-headline {
   padding: 73px 0 110px;
-<<<<<<< HEAD
-  text-align: center; }
-=======
   text-align: center; 
   background: url("../../img/newsglasses.jpg") no-repeat center; }
->>>>>>> demo_day
+
 
 .demo-logo {
   font-size: 90px;
@@ -342,18 +334,15 @@ h6 {
 
 .demo-panel-title {
   margin-bottom: 20px;
-<<<<<<< HEAD
   padding-top: 20px; }
   .demo-panel-title small {
-=======
   padding-top: 20px; 
   background: url("../../img/stack_newspaper.png") no-repeat center;
   color: #000000; }
-    .demo-panel-title small {
->>>>>>> demo_day
+  /*  .demo-panel-title small {
     color: #bfc1c3;
     font-size: inherit;
-    font-weight: 400; }
+    font-weight: 400; }*/
 
 .demo-navigation {
   margin-bottom: -4px;
@@ -527,8 +516,6 @@ h6 {
 
 
 
-
->>>>>>> demo_day
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 2) {
   .logo {
     background-image: url("../images/demo/logo-mask-2x.png"); }
@@ -2439,8 +2426,6 @@ body.vjs-full-window {
   margin-top: 15px;
   text-align: center; }
 
-<<<<<<< HEAD
-=======
 
 .centre {
   width: 600px;
@@ -2500,7 +2485,6 @@ body.vjs-full-window {
 }
 
 
->>>>>>> demo_day
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 2) {
   .login {
     background-image: url("../images/login/imac-2x.png"); } }

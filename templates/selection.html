@@ -1,65 +1,15 @@
 {% extends "base.html" %}
 
-<<<<<<< HEAD
-{% block content %}
-
-=======
 
 {% block content %}
 <div class="heroHeader"></div>
 <div class="centre" >
->>>>>>> demo_day
 <div class="hero-unit">
 <h1> Help us learn what you like! </h1>
 <!-- make this (obviously) more helpful for the UX -->
 <h2> Please mark each of these stories 'yes' or 'no' </h2>
 </div>
-<<<<<<< HEAD
 
-
-  {% for story in story_list %}
-
-<div class="tile">
-  <div class="demo-row">
-
-
-  	<div class="tile-title">
-      <h5><a href="{{ story.url }}"> {{ story.title }} </a></h5>
-    </div>
-
-    <div class="demo-row">
-	  <h4>{{ story.abstract }}</h4>
-    </div>
-
-  </div>
-</div>
-
-
-<div class="demo-row">
-    <div class="span2"> 
-	  <form action="{{ url_for('firstlike') }}" method="post">
-		<input type="hidden" name="story_id" value={{ story.id  }}>
-		  <button  class="btn-small" type="submit" value="Submit">Yes</button></form>
-	</div> <!-- span4 -->
-	<div class="span2">
-		<form action="{{ url_for('firstdislike') }}" method="post">
-		  <input type="hidden" name="story_id" value={{ story.id }}>
-			<button  class="btn-small" type="submit" value="Submit">No</button></form>
-	</div><!--span4-->
-
-</div><!--endrow-->
-</div>
-
-{% endfor %}
-
-<div class="row">
-  <h1><a href="{{ url_for('first_news') }}">Take me to the app, already</a></h1><br/>
-</div>
-
-
-
-{% endblock %}
-=======
 </div>
 
 <div class="container">
@@ -123,4 +73,4 @@
 
 
 {% endblock %}
->>>>>>> demo_day
+

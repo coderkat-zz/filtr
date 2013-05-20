@@ -6,9 +6,7 @@
 
 
 	{% block head %}
-<<<<<<< HEAD
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="Flat-UI-master/css/flat-ui.css") }}">
-=======
+
 
 
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="Flat-UI-master/css/flat-ui.css") }}">
@@ -16,8 +14,6 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="css/animate-custom.css") }}">
 
 
-
->>>>>>> demo_day
 	<title>{% block title %}{% endblock %}</title>
 
 		{% endblock %}
@@ -26,20 +22,15 @@
 
 <body>
 	<div class="wrapper">
-<<<<<<< HEAD
 
-	<div class="navbar">
-		<div class="navbar-inner"
- {% if session['email'] %}
-=======
 
 	<div class="navbar">
 		<div class="navbar-inner"
 
  {% if 'user_id' in session  %}
->>>>>>> demo_day
 
-  <!-- Sign-in status-->
+
+
   <div align=right>You are currently signed in as: {{ session['email'] }}.</div>
   <div align=right><a href="{{ url_for('logout') }}">Log Me Out</a></div>
 
